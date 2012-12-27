@@ -1,10 +1,20 @@
-# Sistema Integrado de Información Gerencial
+#Tablero eTAB
+## Instalacion del Sistema Integrado de Información Gerencial
 
 ## Requerimientos
 * Servidor Web
 * Gestor de base de datos
 * PHP 5.3.8+
+* Python 2.7
 
+## Pasos
+1. Instalación de Symfony2
+2. Instalación de Postgres
+3. Instalación de RabbitMQ
+4. Instalación de Cubos OLAP
+
+
+##1. Instalación de Symfony2
 ### Instalación de los requerimientos desde un servidor Debian 
 Es muy importante poner atención al indicador "#" significa que el comando 
 debe ser ejecutado como usuario root y "$" que debe ser ejecutado como un usuario normal
@@ -13,7 +23,6 @@ debe ser ejecutado como usuario root y "$" que debe ser ejecutado como un usuari
 # apt-get install php5 php5-pgsql php5-sqlite sqlite php5-xdebug  php-apc php5-cli php5-xsl php5-intl php5-mcrypt apache2 postgresql acl git-core curl
 ~~~
 
-##Instalación
 ### Obtener el código fuente
 Puedes descargarlo desde: https://github.com/erodriguez-minsal/SIIG/tarball/master o clonar el repositorio
 
@@ -113,6 +122,7 @@ editar el archivo app/config/parameters.yml y colocar los valores correctos para
 * database_user: nombre_usuario_base_datos
 * database_password: clave_usuario
 
+## 2. Instalación de Postgres
 
 ### Crear la base de datos
 ~~~
@@ -142,6 +152,7 @@ $ app/console fos:user:create --super-admin
 - Ejecutar dentro de la base de datos, con el usuario postgres 
 ~~~
 create extension hstore;
+create extension tablefunc;
 ~~~
 
 - Crear la tabla especial que no se manejará con el ORM, hacerlo con el usuario dueño de la base de datos 
@@ -157,6 +168,7 @@ CREATE TABLE fila_origen_dato(
 );
 ~~~
 
+## 3. Instalación de RabbitMQ
 ### Instalación de RabbitMQ
 [RabbitMQ](http://www.rabbitmq.com/) es un sistema de mensajería empresarial completo y altamente confiable basado en el estándar AMQP
 [Charla sobre RabbitMQ](http://www.symfony.es/noticias/2011/07/06/desymfony-2011-reduciendo-el-acoplamiento-entre-aplicaciones-con-rabbitmq/).
@@ -204,5 +216,23 @@ Pueden aparecer mensajes de aviso como "/usr/bin/nohup: redirecting stderr to st
 - Cargar la interfaz web: entrar a la dirección http://server_name:55672/mgmt/
 El usuario por defecto es **guest** y la clave **guest**
 
+## 4. Instalación de Cubos OLAP
+
+En Debian squeeze con repositorio 'testing':
+
+~#apt-get install python2.7 python-sqlalchemy python-werkzeug python-sqlite python-psycopg2 python-pip
+
+Finalmente se debe usar un gestor de paquetes de Python para instalar el paquete del servidor OLAP 'Cubes'. La siguiente linea utiliza el gestor 'pip'.
+
+~# pip install cubes
+
+Desde la carpeta siig/src/MINSAL/cubos ejecutar:
+ 
+ ~# slicer serve slicer.ini &
+ 
+ Este comando ejecuta el servidor OLAP para que procese peticiones, y muestra su ejecucion en consola. 
+ Para encontrar informacion mas detallada sobre este servidor puede leer la seccion de Gestion y Análisis de Cubos OLAP.
+
 ### Cargar la aplicación
+En este punto se ha terminado la instalacion y estamos listos para cargar la aplicacion usando la direccion:
 http://siig.localhost/app_dev.php
